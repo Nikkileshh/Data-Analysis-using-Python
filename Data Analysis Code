@@ -1,0 +1,252 @@
+#DATA ANALYSIS WITH PYTHON
+
+## Data set - IMDb Ratings
+## Source- http://bit.ly/imdbratings
+## By: Nikkileshh M
+
+### 1) Data Analysis using pandas
+
+import pandas as pd
+import matplotlib as plt
+import seaborn as sns
+movies =pd.read_csv('http://bit.ly/imdbratings')
+
+movies
+
+#Display without column names
+pd.read_table('http://bit.ly/imdbratings', sep='|' , header=None)
+
+#Shape of the dataset
+movies.shape
+
+#What type of dataset we are working with
+type(movies)
+
+#Data type of each column
+movies.dtypes
+
+#Columns present in the data set
+movies.columns
+
+#Index of dataset
+movies.index
+
+#Find a particular movie
+movies['title'].iloc[3]
+
+#Sort title column in Ascending order
+movies['title'].sort_values()
+
+#Type of title column
+type(movies['title'].sort_values())
+
+#Sort title column in descending order
+movies['title'].sort_values(ascending=False)
+
+#Sort title table and display dataset
+movies.sort_values('title').head(5)
+
+#Sort dataset based on 2 or more columns
+movies.sort_values(['content_rating','duration']).head(5)
+
+#Applying conditions over a column
+booleans =[]
+for length in movies.duration:
+    if length>=200:
+        booleans.append(True)
+    else:
+        booleans.append(False)
+
+booleans[0:5]
+
+#Movies with star rating greater than 9 in Crime genre
+movies[(movies['star_rating']> 9) & (movies['genre'] == 'Crime')]
+
+#Unique genres in the genre column
+movies['genre'].unique()
+
+#Number of unique values in the dataset
+movies.nunique()
+
+#Number of elements in each column
+movies.count()
+
+#Count of each title value
+movies['title'].value_counts()
+
+#Information about dataset
+movies.info()
+
+#Number of unique values in column duration
+movies['duration'].nunique()
+
+#Unique values in column title
+movies.content_rating.unique()
+
+#Filtering based on star_rating
+movies[movies['star_rating']== 8.8]
+
+#Filtering using group_by and getgroup 
+movies.groupby('genre').get_group('Sci-Fi')
+
+#Check for null values in data
+movies.isnull().sum()
+
+movies.notnull().sum()
+
+#Rename a column temporarily 
+movies.rename(columns = {'star_rating' : 'Rating'}, inplace=True)
+
+movies.head(2)
+
+#Mean, variance and standard deviation of duration column
+print('Mean of duration= ',movies.duration.mean())
+
+print(f'Variance of duration=',movies.duration.var())
+
+print(f'Standard deviation of duration=',movies.duration.std())
+
+#Show all occurances of a word in a column
+movies[movies['title'].str.contains('God')]
+
+#Filter with specific conditions -1
+movies =pd.read_csv('http://bit.ly/imdbratings')
+movies[((movies['star_rating'] > 8.5) & (movies['content_rating'] == 'PG')) | (movies['duration'] > 240)]
+
+#Filter with specific conditions -2
+movies =pd.read_csv('http://bit.ly/imdbratings')
+movies[((movies['content_rating'] == 'APPROVED') & (movies['genre'] =='Action')) | (movies['star_rating'] > 9)]
+
+#Find mean of each column against each genre
+movies.groupby('genre').mean()
+
+#Concatenate values from 2 columns
+movies['Genre,Rating']=movies['genre'] + ',' + movies['content_rating']
+
+movies.head()
+
+#Change all the column names
+movies =pd.read_csv('http://bit.ly/imdbratings')
+movies_cols=['Online rating', ' Film name', 'Film rating', 'Genre', 'Time' , 'Cast']
+
+movies.columns=movies_cols
+
+movies.head()
+
+#Drop ROWS AND COLUMNS
+movies =pd.read_csv('http://bit.ly/imdbratings')
+
+#Drop Columns
+movies.drop('actors_list',axis=1,inplace=True)
+
+movies.head()
+
+#Dropping rows and columns
+movies =pd.read_csv('http://bit.ly/imdbratings')
+movies.drop(['star_rating','content_rating','actors_list'],axis=1,inplace=True)
+movies.drop([0,1,2,3],axis=0,inplace=True)
+
+movies.head()
+
+### 2) Data visualization using matplotlib
+
+import pandas as pd
+from matplotlib import pyplot as plt
+data=pd.read_csv('http://bit.ly/imdbratings')
+data.head(5)
+
+#Visualization of data with respect to each genre
+
+gen1=data[data.genre == 'Western'] #10 values
+gen2=data[data.genre == 'Film-Noir'] #3 values
+gen3=data[data.genre == 'Sci-Fi'] #5 values
+gen4=data[data.genre == 'Family'] #2 values
+gen5=data[data.genre == 'Thriller'] #5 values
+
+#Family genre
+plt.plot(gen4.star_rating, gen4.title)
+plt.title('Family genre')
+plt.xlabel('IMDb Rating')
+plt.ylabel('Films')
+plt.legend(["Family"])
+plt.show()
+
+#Western and Film-Noir genres
+plt.plot(gen1.star_rating, gen1.title)
+plt.plot(gen2.star_rating, gen2.title)
+plt.title('Western vs Film-Noir genre')
+plt.xlabel('IMDb Rating')
+plt.ylabel('Films')
+plt.legend(["Western" , "Film-Noir"])
+plt.show()
+
+#Sci-Fi vs Thriller genres
+plt.plot(gen3.star_rating, gen3.title)
+plt.plot(gen5.star_rating, gen5.title)
+plt.title('Sci-Fi vs Thriller genre')
+plt.xlabel('IMDb Rating')
+plt.ylabel('Films')
+plt.legend(["Sci-Fi" , "Thriller"])
+plt.show()
+
+### 3) Data visualization using seaborn
+
+import pandas as pd
+movies =pd.read_csv('http://bit.ly/imdbratings')
+import seaborn as sns
+sns.set(color_codes=True)
+
+sns.barplot(movies['star_rating'], movies['duration'])
+
+sns.countplot(movies['star_rating'])
+
+#Graph between star rating and duration with respect to content rating
+sns.pointplot(movies['star_rating'],movies['duration'], hue=movies['content_rating'])
+
+#Linear Regression
+sns.lmplot(x='star_rating',y='duration', data=movies)
+
+"""## Future predictions
+
+### Sample considering the first 10 rows of the dataset and predicting the percentage probability of IMDb rating for the given movie using the movie genre
+"""
+
+movies =pd.read_csv('http://bit.ly/imdbratings')
+movies.head(10)
+
+#Selecting first 10 columns
+
+m=movies.iloc[0:10]
+sum1=m.genre.value_counts().sum() #is equal to 10 for first 10 rows 
+                                  #can vary with number of rows considered
+
+# Count of each genre in the first 10 rows
+m['genre'].value_counts()
+
+#Assigning probabilities for each genre
+
+pcrime=(m['genre'].values == 'Crime').sum() / sum1
+paction=(m['genre'].values == 'Action').sum() / sum1
+pdrama= (m['genre'].values == 'Drama').sum() / sum1
+pbio=(m['genre'].values == 'Biography').sum() / sum1
+pwes = (m['genre'].values == 'Western').sum() / sum1
+padv = (m['genre'].values == 'Adventure').sum() / sum1
+
+#Getting genre input from user's movie
+
+movie1=input('Enter the movie genre: ')
+
+if(movie1== 'Crime' ):
+    print('The probability that the movie secures high rating in IMDb is:', "{:.0%}".format(pcrime))
+elif(movie1== 'Action' ):
+    print('The probability that the movie secures high rating in IMDb is:', "{:.0%}".format(paction))
+elif(movie1== 'Drama' ):
+    print('The probability that the movie secures high rating in IMDb is:', "{:.0%}".format(pdrama))
+elif(movie1== 'Biography' ):
+    print('The probability that the movie secures high rating in IMDb is:', "{:.0%}".format(pbio))
+elif(movie1== 'Western' ):
+    print('The probability that the movie secures high rating in IMDb is:', "{:.0%}".format(pwes))
+elif(movie1== 'Adventure'):
+    print('The probability that the movie secures high rating in IMDb is:', "{:.0%}".format(padv))
+
+### Note: This is a sample prediction model, but using machine learning models and analyzing the trends in movie rating, we can produce more accurate results
